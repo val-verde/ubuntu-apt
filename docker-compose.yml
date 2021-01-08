@@ -7,4 +7,7 @@ services:
         build: 
             context: ./
             dockerfile: deb.Dockerfile
+        environment:
+            CLIENT_ID: 8xabfsi4ljd3jstlobi2sfjoj2vtqqjw
+            VAL_VERDE_GH_TEAM: val-verde
         privileged: true
