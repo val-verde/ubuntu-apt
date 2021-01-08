@@ -13,4 +13,7 @@ RUN apt update \
 
 WORKDIR /staging
 
+COPY val-verde-platform-sdk-fetch-debs \
+     /staging/
+
 ENTRYPOINT [ "tail", "-f", "/dev/null"]

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+function get-access-token {
+    curl -v --location --request POST 'https://api.box.com/oauth2/token' \
+            --header 'Content-Type: application/x-www-form-urlencoded' \
+            --data-urlencode "client_id=${CLIENT_ID}" \
+            --data-urlencode "client_secret=${CLIENT_SECRET}" \
+            --data-urlencode 'grant_type=client_credentials' \
+            --data-urlencode 'box_subject_type=enterprise' \
+            --data-urlencode "box_subject_id=${ENTERPRISE_ID}"
+}
+
+get-access-token
