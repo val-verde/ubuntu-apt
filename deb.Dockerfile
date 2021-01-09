@@ -8,6 +8,7 @@ ENV CLIENT_SECRET=${CLIENT_SECRET} \
 RUN apt update \
     && apt install -y curl \
                       git \
+                      jq \
                       ssh \
     && mkdir staging
 

@@ -2,14 +2,17 @@
 
 set -e
 
-function get-access-token {
-    curl -v --location --request POST 'https://api.box.com/oauth2/token' \
-            --header 'Content-Type: application/x-www-form-urlencoded' \
-            --data-urlencode "client_id=${CLIENT_ID}" \
-            --data-urlencode "client_secret=${CLIENT_SECRET}" \
-            --data-urlencode 'grant_type=client_credentials' \
-            --data-urlencode 'box_subject_type=enterprise' \
-            --data-urlencode "box_subject_id=${ENTERPRISE_ID}"
+function get-auth-bearer-info() {
+    BEARER_CREDS=$(curl -v --location --request POST 'https://api.box.com/oauth2/token' \
+                            --header 'Content-Type: application/x-www-form-urlencoded' \
+                            --data-urlencode "client_id=${CLIENT_ID}" \
+                            --data-urlencode "client_secret=${CLIENT_SECRET}" \
+                            --data-urlencode 'grant_type=client_credentials' \
+                            --data-urlencode 'box_subject_type=enterprise' \
+                            --data-urlencode "box_subject_id=${ENTERPRISE_ID}")
+    ACCESS_TOKEN=$(echo ${BEARER_CREDS} | jq '.access_token')
+    EXPIRY_TIME=$(echo ${BEARER_CREDS} | jq '.expires_in')
 }
 
-get-access-token
+get-auth-bearer-info
+
