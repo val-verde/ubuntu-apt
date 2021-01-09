@@ -16,3 +16,17 @@ function get-auth-bearer-info() {
 
 get-auth-bearer-info
 
+function list-folder-contents() {
+    BEARER_TOKEN=$(echo ${ACCESS_TOKEN} | tr -d '"')
+
+    curl -v --location --request GET "https://api.box.com/2.0/folders/${FOLDER_ID}" \
+           -H 'Content-Type: application/json' \
+           -H "Authorization: Bearer ${BEARER_TOKEN}"
+}
+
+function get-unsigned-deb-files {
+   FOLDER_ID=129384136434 list-folder-contents
+}
+
+get-unsigned-deb-files
+
