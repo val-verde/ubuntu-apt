@@ -10,23 +10,35 @@ function get-auth-bearer-info() {
                             --data-urlencode 'grant_type=client_credentials' \
                             --data-urlencode 'box_subject_type=enterprise' \
                             --data-urlencode "box_subject_id=${ENTERPRISE_ID}")
-    ACCESS_TOKEN=$(echo ${BEARER_CREDS} | jq '.access_token')
-    EXPIRY_TIME=$(echo ${BEARER_CREDS} | jq '.expires_in')
+    ACCESS_TOKEN=$(echo ${BEARER_CREDS} | jq -r '.access_token')
+    EXPIRY_TIME=$(echo ${BEARER_CREDS} | jq -r '.expires_in')
 }
 
 get-auth-bearer-info
 
 function list-folder-contents() {
-    BEARER_TOKEN=$(echo ${ACCESS_TOKEN} | tr -d '"')
-
-    curl -v --location --request GET "https://api.box.com/2.0/folders/${FOLDER_ID}" \
-           -H 'Content-Type: application/json' \
-           -H "Authorization: Bearer ${BEARER_TOKEN}"
+    FILE_LIST=$(curl --location --request GET "https://api.box.com/2.0/folders/${FOLDER_ID}/items" \
+                        -H 'Content-Type: application/json' \
+                        -H "Authorization: Bearer ${ACCESS_TOKEN}")
+    FILE_ENTRIES=$(echo ${FILE_LIST} | jq -r '.entries')
 }
 
-function get-unsigned-deb-files {
-   FOLDER_ID=129384136434 list-folder-contents
+function get-all-deb-files() {
+    FOLDER_ID=129384435209 list-folder-contents
+}
+
+function get-unsigned-deb-files() {
+    FOLDER_ID=129384136434 list-folder-contents
+    fileCount=$(echo ${FILE_ENTRIES} | jq length)
+
+    for i in `seq 0 $(($fileCount - 1))`; do
+        FILE_NAME=$(echo ${FILE_ENTRIES} | jq -r "[.[].name][$i]")
+        FILE_ID=$(echo ${FILE_ENTRIES} | jq -r "[.[].id][$i]")
+        curl -X GET "https://api.box.com/2.0/files/${FILE_ID}/content" \
+                    -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+                    -L --output ${FILE_NAME}
+    done
+
 }
 
 get-unsigned-deb-files
-
