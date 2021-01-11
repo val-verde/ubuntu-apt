@@ -9,6 +9,7 @@ RUN apt update \
     && apt install -y curl \
                       git \
                       jq \
+                      reprepro \
                       ssh \
     && mkdir staging
 
@@ -17,6 +18,8 @@ WORKDIR /staging
 RUN mkdir -p unsigned signed
 
 COPY val-verde-platform-sdk-fetch-debs \
+     val-verde-platform-sdk-apt-repo-utils \
+     distributions.in \
      /staging/
 
 ENTRYPOINT [ "tail", "-f", "/dev/null"]

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+function generate-apt-repo-base {
+    if [[ ! -e /staging/apt-repo/conf/distributions ]]; then
+        touch /staging/apt-repo/conf/distributions
+        cp /staging/distributions.in \
+           /staging/apt-repo/conf/distributions
+    fi
+
+    pushd /staging/apt-repo
+    reprepro includedeb focal /staging/signed/${FILE_NAME}.deb
+    popd
+}
+
+generate-apt-repo-base

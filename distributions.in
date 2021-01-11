@@ -1,0 +1,7 @@
+Origin: Val Verde Inc.
+Label: Val-Verde Inc.
+Suite: devel
+Codename: focal
+Architectures: x86_64
+Components: main
+Description: Val Verde Debian packages hosted on Val Verde apt repository
