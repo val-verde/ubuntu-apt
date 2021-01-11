@@ -3,7 +3,7 @@
 set -e
 
 function get-auth-bearer-info() {
-    BEARER_CREDS=$(curl -v --location --request POST 'https://api.box.com/oauth2/token' \
+    BEARER_CREDS=$(curl -X POST 'https://api.box.com/oauth2/token' \
                             --header 'Content-Type: application/x-www-form-urlencoded' \
                             --data-urlencode "client_id=${CLIENT_ID}" \
                             --data-urlencode "client_secret=${CLIENT_SECRET}" \
@@ -17,9 +17,12 @@ function get-auth-bearer-info() {
 get-auth-bearer-info
 
 function list-folder-contents() {
-    FILE_LIST=$(curl --location --request GET "https://api.box.com/2.0/folders/${FOLDER_ID}/items" \
+    LIMIT=${LIMIT:-1000}
+    OFFSET=${OFFSET:-0}
+    FILE_LIST=$(curl -X GET "https://api.box.com/2.0/folders/${FOLDER_ID}/items?limit=${LIMIT}&offset=${OFFSET}" \
                         -H 'Content-Type: application/json' \
                         -H "Authorization: Bearer ${ACCESS_TOKEN}")
+    FILE_COUNT=$(echo ${FILE_LIST} | jq length)
     FILE_ENTRIES=$(echo ${FILE_LIST} | jq -r '.entries')
 }
 
@@ -28,17 +31,17 @@ function get-all-deb-files() {
 }
 
 function get-unsigned-deb-files() {
-    FOLDER_ID=129384136434 list-folder-contents
-    fileCount=$(echo ${FILE_ENTRIES} | jq length)
+    FOLDER_ID=129384136434
+    list-folder-contents
 
-    for i in `seq 0 $(($fileCount - 1))`; do
+    for i in `seq 0 $(($FILE_COUNT - 1))`; do
         FILE_NAME=$(echo ${FILE_ENTRIES} | jq -r "[.[].name][$i]")
         FILE_ID=$(echo ${FILE_ENTRIES} | jq -r "[.[].id][$i]")
         curl -X GET "https://api.box.com/2.0/files/${FILE_ID}/content" \
                     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
                     -L --output ${FILE_NAME}
     done
-
 }
+
 
 get-unsigned-deb-files
