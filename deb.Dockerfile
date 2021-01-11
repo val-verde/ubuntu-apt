@@ -14,6 +14,8 @@ RUN apt update \
 
 WORKDIR /staging
 
+RUN mkdir -p unsigned signed
+
 COPY val-verde-platform-sdk-fetch-debs \
      /staging/
 

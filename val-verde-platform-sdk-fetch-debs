@@ -27,7 +27,8 @@ function list-folder-contents() {
 }
 
 function get-all-deb-files() {
-    FOLDER_ID=129384435209 list-folder-contents
+    FOLDER_ID=129384435209
+    list-folder-contents
 }
 
 function get-unsigned-deb-files() {
@@ -39,9 +40,8 @@ function get-unsigned-deb-files() {
         FILE_ID=$(echo ${FILE_ENTRIES} | jq -r "[.[].id][$i]")
         curl -X GET "https://api.box.com/2.0/files/${FILE_ID}/content" \
                     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-                    -L --output ${FILE_NAME}
+                    -L --output unsigned/${FILE_NAME}
     done
 }
-
 
 get-unsigned-deb-files
