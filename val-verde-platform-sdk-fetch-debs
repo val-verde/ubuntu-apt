@@ -26,6 +26,18 @@ function list-folder-contents() {
     FILE_ENTRIES=$(echo ${FILE_LIST} | jq -r '.entries')
 }
 
+function create-folder() {
+    curl -i -X POST "https://api.box.com/2.0/folders" \
+     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+     -H "Content-Type: application/json" \
+     -d '{"name":"'"${NEW_NAME}"'", "parent":{"id":"0"}'
+}
+
+function delete-folder() {
+    curl -i -X DELETE "https://api.box.com/2.0/folders/${FOLDER_ID}" \
+     -H "Authorization: Bearer ${ACCESS_TOKEN}"
+}
+
 function get-all-deb-files() {
     FOLDER_ID=129384435209
     list-folder-contents

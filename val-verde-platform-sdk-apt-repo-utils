@@ -2,14 +2,18 @@
 
 set -e
 
+FILE_NAME=$1
+
 function generate-apt-repo-base {
-    if [[ ! -e /staging/apt-repo/conf/distributions ]]; then
-        touch /staging/apt-repo/conf/distributions
-        cp /staging/distributions.in \
-           /staging/apt-repo/conf/distributions
+    if [[ ! -e /staging/${FILE_NAME}-apt-repo/conf/distributions ]]; then
+        mkdir -p ${FILE_NAME}-apt-repo/conf
+        touch /staging/${FILE_NAME}-apt-repo/conf/distributions
     fi
 
-    pushd /staging/apt-repo
+    cp /staging/distributions.in \
+    /staging/${FILE_NAME}-apt-repo/conf/distributions
+
+    pushd /staging/${FILE_NAME}-apt-repo
     reprepro includedeb focal /staging/signed/${FILE_NAME}.deb
     popd
 }
